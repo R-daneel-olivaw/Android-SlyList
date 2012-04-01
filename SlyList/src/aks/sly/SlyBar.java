@@ -1,9 +1,12 @@
 package aks.sly;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.SeekBar;
 
 public class SlyBar extends SeekBar {
@@ -13,21 +16,68 @@ public class SlyBar extends SeekBar {
 
 	}
 
-
-
 	public boolean onTouchEvent(MotionEvent event) {
 
 		// Log.i((event.getHistoricalX(1) - event.getX()) + "",
 		// "" + (event.getHistoricalY(1) - event.getY()));
 
-		if (Math.abs(event.getX(1) - event.getX()) > Math.abs(event.getY(1)
-				- event.getY()))
-			return propagateToSuperior(event);
+		float distX = Math.abs(event.getHistoricalX(1) - event.getX());
+		float distY = Math.abs(event.getHistoricalY(1) - event.getY());
+
+		Rect r = new Rect();
+		this.getGlobalVisibleRect(r);
+		if (!isPointInsideView(event.getRawX(), event.getRawY(), this)) {
+			return false;
+		}
+
+		Log.i("-------", "-------");
+		Log.i("distX", distX + "");
+		Log.i("distY", distY + "");
+
+		if (distX > distY) {
+			propagateToSuperior(event);
+			return true;
+		}
 
 		// slyGestureDetector.onTouchEvent(event);
 
 		return false;
 	}
+
+	private boolean isPointInsideView(float x, float y, View view) {
+		int location[] = new int[2];
+		view.getLocationOnScreen(location);
+		int viewX = location[0];
+		int viewY = location[1];
+
+		// point is inside view bounds
+		if ((x > viewX && x < (viewX + view.getWidth()))
+				&& (y > viewY && y < (viewY + view.getHeight()))) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	// public boolean onTouchEvent(MotionEvent event) {
+	// Log.i("-------", "-------"+event.getAction());
+	// switch (event.getAction()) {
+	// case MotionEvent.ACTION_MOVE:
+	// float distX = Math.abs(event.getX(1) - event.getX());
+	// float distY = Math.abs(event.getY(1) - event.getY());
+	//
+	// Log.i("-------", "-------");
+	// Log.i("distX", distX + "");
+	// Log.i("distY", distY + "");
+	//
+	// if (distX > distY) {
+	// propagateToSuperior(event);
+	// return true;
+	// }
+	// default:
+	// return false;
+	// }
+	// }
 
 	SlyGestureListner slyGestureListner = new SlyGestureListner();
 	GestureDetector slyGestureDetector = new GestureDetector(getContext(),
