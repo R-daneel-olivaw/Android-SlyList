@@ -29,7 +29,7 @@ public class SlyListActivity extends ListActivity {
 			testList.add(new TestImpl());
 		}
 
-		SlikAdapter mySlikAdapter = new SlikAdapter(testList, this);
+		SlikAdapter mySlikAdapter = new SlikButtonItemAdapter(testList, this);
 		setListAdapter(mySlikAdapter);
 	}
 
